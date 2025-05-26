@@ -1,14 +1,39 @@
 #include "stm32f401.h"
 #include "uart.h"
+#include "spi.h"
+#include "can.h"
+
+
+#define MCP2515_READ_RXB0SIDH 0x90
+
+
 
 void TIM2_IRQHandler(void) {
     if (TIM2_SR & 0x01) {
         TIM2_SR &= ~0x01;
         GPIOC_ODR ^= (1 << 13);
-        uint32_t counter = TIM2_CNT;
-        //uart_send_async_string("Hi from TIM2\r\n");
-        uart_send_hex(counter);  // Sends: 0x000001F4 if counter is 500
-        uart_send_char('\n');
+
+        uint8_t can_data[13]; // MCP2515 returns 13 bytes per CAN frame
+
+        // Start SPI transaction
+        // (assert MCP2515 CS low, depends on your CS pin)
+        GPIOA_ODR &= ~(1 << 4); // Assuming PA4 is CS
+
+        spi1_transfer(MCP2515_READ_RXB0SIDH); // Read RXB0
+
+        for (int i = 0; i < 13; ++i) {
+        	can_data[i] = spi1_transfer(0xFF); // Dummy byte to read
+        }
+
+        // End SPI transaction
+        GPIOA_ODR |= (1 << 4); // CS high
+
+
+        for (int i = 0; i < 13; ++i) {
+        	uart_send_hex(can_data[i]);
+
+        }
+
     }
 }
 
@@ -16,6 +41,11 @@ void gpio_init(void) {
     RCC_AHB1ENR |= (1 << 2);
     GPIOC_MODER &= ~(0x3 << (13 * 2));
     GPIOC_MODER |= (0x1 << (13 * 2));
+
+    GPIOA_MODER &= ~(3 << (2 * 4));
+    GPIOA_MODER |=  (1 << (2 * 4));
+
+    cs_high();
 }
 
 void tim2_init(void) {
@@ -30,6 +60,7 @@ void tim2_init(void) {
 int main(void) {
     gpio_init();
     uart_init();
+    spi1_init();
     tim2_init();
 
     while (1) {

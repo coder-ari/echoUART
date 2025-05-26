@@ -27,7 +27,10 @@ void uart_init(void) {
     RCC_APB2ENR |= (1 << 4); // USART1 clock
 
     // Baud rate (for 9600 assuming 16MHz)
-    USART1_BRR = (8 << 4) | 11;
+    //USART1_BRR = (8 << 4) | 11;
+
+    // Baud rate (for 57600 assuming 16MHz)
+    USART1_BRR = (17 << 4) | 6;
 
     USART1_CR1 = (1 << 13) | (1 << 3) | (1 << 2); // UE, TE, RE
     USART1_CR1 |= (1 << 5); // RXNEIE
@@ -82,16 +85,19 @@ void USART1_IRQHandler(void) {
         }
     }
 }
-void uart_send_hex(uint32_t value) {
-    char hex_str[11]; // "0x" + 8 hex digits + null terminator
-    hex_str[0] = '0';
-    hex_str[1] = 'x';
 
-    for (int i = 0; i < 8; ++i) {
-        uint8_t nibble = (value >> ((7 - i) * 4)) & 0xF;
-        hex_str[2 + i] = (nibble < 10) ? ('0' + nibble) : ('A' + nibble - 10);
-    }
+char uart_receive_char(void) {
+    // Wait until RXNE (Receive Data Register Not Empty) is set
+    while (!(USART1_SR & (1 << 5)));
 
-    hex_str[10] = '\0'; // null terminator
-    uart_send_string(hex_str);
+    // Read the received byte (only the lowest 8 bits are valid)
+    return (char)(USART1_DR & 0xFF);
 }
+
+void uart_send_hex(uint32_t value) {
+    uart_send_async((value >> 24) & 0xFF); // MSB first
+    uart_send_async((value >> 16) & 0xFF);
+    uart_send_async((value >> 8) & 0xFF);
+    uart_send_async(value & 0xFF);         // LSB
+}
+

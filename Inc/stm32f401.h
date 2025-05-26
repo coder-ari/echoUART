@@ -16,6 +16,7 @@
 #define RCC_BASE            (AHB1PERIPH_BASE + 0x3800UL)
 #define TIM2_BASE           (APB1PERIPH_BASE + 0x0000UL)
 #define USART1_BASE         (APB2PERIPH_BASE + 0x1000UL)
+#define SPI1_BASE           (PERIPH_BASE 	 + 0x13000UL)
 
 //
 // RCC registers
@@ -31,6 +32,7 @@
 #define GPIOA_PUPDR         (*(volatile uint32_t *)(GPIOA_BASE + 0x0CUL))
 #define GPIOA_AFRL          (*(volatile uint32_t *)(GPIOA_BASE + 0x20UL))
 #define GPIOA_AFRH          (*(volatile uint32_t *)(GPIOA_BASE + 0x24UL))
+#define GPIOA_ODR           (*(volatile uint32_t *)(GPIOA_BASE + 0x14))
 
 //
 // GPIOC registers
@@ -57,8 +59,13 @@
 #define USART1_CR1          (*(volatile uint32_t *)(USART1_BASE + 0x0CUL))
 #define USART1_CR2          (*(volatile uint32_t *)(USART1_BASE + 0x10UL))
 #define USART1_CR3          (*(volatile uint32_t *)(USART1_BASE + 0x14UL))
-
 //
+//SPI registers
+//
+//
+#define SPI1_CR1            (*(volatile uint32_t *)(SPI1_BASE + 0x00))
+#define SPI1_SR             (*(volatile uint32_t *)(SPI1_BASE + 0x08))
+#define SPI1_DR             (*(volatile uint32_t *)(SPI1_BASE + 0x0C))
 // NVIC
 //
 #define NVIC_ISER0          (*(volatile uint32_t *)0xE000E100UL)
