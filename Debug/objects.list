@@ -1,4 +1,6 @@
+"./Src/can.o"
 "./Src/main.o"
+"./Src/spi.o"
 "./Src/syscalls.o"
 "./Src/sysmem.o"
 "./Src/uart.o"
