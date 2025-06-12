@@ -53,37 +53,12 @@ int main(void) {
 
     uart_send_async_string("System Initialized in NORMAL MODE\r\n");
 
-
-   /* uint8_t id;
-    uint8_t data[8];
-    uint8_t len;
-
-    // Send a test CAN message
-    can_send_uint32(0x12345678);
-    delay_ms(10); // Wait for internal loopback
-
-    // Try to receive the message
-    if (can_receive(&id, data, &len)) {
-        uart_send_async_string("Loopback receive: ");
-        for (int i = 0; i < len; i++) {
-            uart_send_hex(data[i]);
-            uart_send_async_string(" ");
-        }
-        uart_send_async_string("\r\n");
-    } else {
-    	uart_send_async_string("No data in loopback\r\n");
-    }*/
-
     while (1) {
+    	uart_try_send_from_fifo();
     	if (can_receive(&id, rx_data, &len)) {
-    	    //uart_send_async_string("CAN RX: ID=");
-    	    //uart_send_hex(id);
-    	    //uart_send_async_string(" Data=");
     	    for (int i = 0; i < len; i++) {
     	        uart_send_async(rx_data[i]);
-    	        //uart_send_async_string(" ");
     	    }
-    	    //uart_send_async_string("\r\n");
     	}
     }
 }
