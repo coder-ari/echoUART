@@ -85,7 +85,7 @@ void can_init(void) {
     delay_ms(10);
 }
 
-bool can_send_bytes(uint8_t* data, uint8_t len) {
+/*bool can_send_bytes(uint8_t* data, uint8_t len) {
     if (len > 8) return false; // MCP2515 supports max 8 bytes
 
     // Check if TX buffer is free (TXREQ should be 0)
@@ -114,7 +114,44 @@ bool can_send_bytes(uint8_t* data, uint8_t len) {
     cs_high();
 
     return true;
+}*/
+
+bool can_send_bytes(uint8_t* data, uint8_t len) {
+    if (len > 8) return false; // MCP2515 supports max 8 bytes
+
+    // Check if TX buffer is free (TXREQ should be 0)
+    uint8_t txb0ctrl = mcp2515_read_register(MCP2515_TXB0CTRL);
+    if (txb0ctrl & 0x08) {
+        return false; // Buffer busy
+    }
+
+    uint16_t id = 0x0065;  // Your target ID
+
+    uint8_t sidh = (id >> 3) & 0xFF;
+    uint8_t sidl = (id & 0x07) << 5;
+
+    cs_low();
+    spi1_transfer(MCP2515_WRITE);
+    spi1_transfer(MCP2515_TXB0SIDH);     // Start writing at TXB0SIDH
+    spi1_transfer(sidh);                 // SIDH
+    spi1_transfer(sidl);                 // SIDL
+    spi1_transfer(0x00);                 // EID8 (not used)
+    spi1_transfer(0x00);                 // EID0 (not used)
+    spi1_transfer(len & 0x0F);           // DLC
+
+    for (uint8_t i = 0; i < len; i++) {
+        spi1_transfer(data[i]);
+    }
+    cs_high();
+
+    // Request to send TXB0
+    cs_low();
+    spi1_transfer(MCP2515_RTS_TXB0);
+    cs_high();
+
+    return true;
 }
+
 
 bool can_receive(uint8_t *id, uint8_t *data, uint8_t *len) {
     uint8_t canintf = mcp2515_read_register(MCP2515_CANINTF);

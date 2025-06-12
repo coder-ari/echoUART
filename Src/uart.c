@@ -107,7 +107,7 @@ void USART1_IRQHandler(void) {
         shift_buf[FRAME_SEARCH_BUFFER - 1] = byte;
 
         // Check if we have a candidate frame
-        if (shift_buf[0] == START_BYTE && shift_buf[1] == ID) {
+        if (shift_buf[0] == START_BYTE) {
             uint8_t sum = 0;
             for (int i = 0; i < CAN_FRAME_SIZE - 1; i++) {
                 sum += shift_buf[i];

@@ -33,34 +33,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := sendUART_recieveSPI
+BUILD_ARTIFACT_NAME := UART_SPI_CAN
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-sendUART_recieveSPI.elf \
+UART_SPI_CAN.elf \
 
 MAP_FILES += \
-sendUART_recieveSPI.map \
+UART_SPI_CAN.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-sendUART_recieveSPI.list \
+UART_SPI_CAN.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: sendUART_recieveSPI.elf secondary-outputs
+main-build: UART_SPI_CAN.elf secondary-outputs
 
 # Tool invocations
-sendUART_recieveSPI.elf sendUART_recieveSPI.map: $(OBJS) $(USER_OBJS) C:\Users\ARITRA\STM32CubeIDE\workspace_1.15.0\echoUART\STM32F401CDUX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "sendUART_recieveSPI.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\ARITRA\STM32CubeIDE\workspace_1.15.0\echoUART\STM32F401CDUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="sendUART_recieveSPI.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+UART_SPI_CAN.elf UART_SPI_CAN.map: $(OBJS) $(USER_OBJS) C:\Users\ARITRA\STM32CubeIDE\workspace_1.15.0\echoUART\STM32F401CDUX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "UART_SPI_CAN.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\ARITRA\STM32CubeIDE\workspace_1.15.0\echoUART\STM32F401CDUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="UART_SPI_CAN.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -69,14 +69,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-sendUART_recieveSPI.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "sendUART_recieveSPI.list"
+UART_SPI_CAN.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "UART_SPI_CAN.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) default.size.stdout sendUART_recieveSPI.elf sendUART_recieveSPI.list sendUART_recieveSPI.map
+	-$(RM) UART_SPI_CAN.elf UART_SPI_CAN.list UART_SPI_CAN.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
